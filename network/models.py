@@ -7,6 +7,6 @@ class User(AbstractUser):
 
 
 class Post(models.Model):
-    user = models.ForeignKey('User')
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 
