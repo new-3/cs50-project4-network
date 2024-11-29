@@ -3,4 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    likes = models.ManyToManyField('Post', related_name="liked_by")
+
+
+class Post(models.Model):
+    user = models.ForeignKey('User')
+
+
