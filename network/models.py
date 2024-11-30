@@ -44,7 +44,7 @@ class Post(models.Model):
     body = models.TextField(null=False, default="EMPTY")
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
-    likes = models.ManyToManyField('UserProfile', related_name="likes")
+    likes = models.ManyToManyField('UserProfile', null=True, blank=True, related_name="likes")
     like_count = models.IntegerField(default=0)
 
 @receiver(post_save, sender=Post.likes.through)
