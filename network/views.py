@@ -12,6 +12,8 @@ def index(request):
 
 
 def all_posts(request):
+    # this is temporary function for early developing.
+    # should be replaced by fetching API Calls.
     posts = Post.objects.all()
     print(posts)
     return render(request, "network/index.html", {

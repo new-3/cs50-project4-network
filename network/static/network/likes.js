@@ -1,3 +1,4 @@
+// React (text/babel)
 console.log('script loaded')
     function Like() {
         const [like, setLike] = React.useState(false);
