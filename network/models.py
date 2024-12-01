@@ -10,7 +10,7 @@ class User(AbstractUser):
         return f"{self.username}"
 
 class UserProfile(models.Model):
-    user = models.OneToOneField('User', on_delete=models.CASCADE)
+    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='profile')
     photo = models.ImageField(upload_to="network/users/pictures/", default="network/users/pictures/default.jpg")
     following = models.ManyToManyField('self', related_name='followers', symmetrical=False)
     follower_count = models.IntegerField(default=0)
