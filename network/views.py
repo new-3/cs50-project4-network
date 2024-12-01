@@ -101,3 +101,6 @@ def compose(request):
     post = Post(user_profile=profile, body=body)
     post.save()
     return JsonResponse({"message": "Post is successfully saved."}, status=201)
+
+
+## Comment Added form Laptop
