@@ -1,5 +1,8 @@
+import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -72,3 +75,29 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+# APIs
+# Compose Post
+@login_required
+def compose(request):
+    
+    # Composing a new post must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "Post request required."}, status=400)
+    
+    data = json.loads(request.body)
+    user = request.user
+    profile = user.profile
+    body = data.get("body", "")
+
+    # Check body of post
+    
+    if body == "":
+        return JsonResponse({
+            "error": "Body must be non-empty."
+        })
+    
+    post = Post(user_profile=profile, body=body)
+    post.save()
+    return JsonResponse({"message": "Post is successfully saved."}, status=201)

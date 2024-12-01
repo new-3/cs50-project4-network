@@ -40,11 +40,11 @@ def update_following_count_on_remove(sender, instance, **kwargs):
 
 
 class Post(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='posts')
+    user_profile = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='posts')
     body = models.TextField(null=False, default="EMPTY")
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
-    likes = models.ManyToManyField('UserProfile', null=True, blank=True, related_name="likes")
+    likes = models.ManyToManyField('UserProfile', related_name="likes")
     like_count = models.IntegerField(default=0)
 
 @receiver(post_save, sender=Post.likes.through)
