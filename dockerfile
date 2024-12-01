@@ -1,6 +1,15 @@
 # Use Python 3.8 image
 FROM python:3.8-slim
 
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    vim \
+    build-essential \
+    && apt-get clean
+
 # Set the working directory
 WORKDIR /app
 
