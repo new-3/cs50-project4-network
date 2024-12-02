@@ -6,6 +6,8 @@ cffi==1.17.1
 charset-normalizer==3.4.0
 cryptography==43.0.3
 Django==4.2.16
+pillow==10.4.0
+psycopg2-binary==2.9.10
 pycparser==2.22
 sqlparse==0.5.1
-typing-extensions==4.12.2
+typing_extensions==4.12.2
