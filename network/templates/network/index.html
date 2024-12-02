@@ -2,20 +2,43 @@
 {% load static %}
 
 {% block body %}
-    <h1>{{ title }}</h1>
-    <div class="border posts-container">
-        {% for post in posts %}
-            <div id="post_{{post.id}}" class="post-container border bg-light m-2 p-2">
-                <div class="username">{{post.user.username}}</div>
-                <div class="content">{{post.body}}</div>
-                <div class="timestamp">{{post.created_at}}</div>
-                <div class="like-container"></div>
+    <div class="big-container px-3">
+        <h1>{{ title }}</h1>
+    
+        <div class="border container-sm w-50 posts-container">
+            <!-- Create new Post Section -->
+            <section>
+                <div id="compose-view" class="">
+                    <h3>Create a new Post</h3>
+                    <form class="compose-form text-right">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea class="form-control my-1" id="compose-body" placeholder="Share your Thoughts!"></textarea>
+                            <input type="submit" class="btn btn-primary">
+                        </div>
+                    </form>
                 </div>
-            </div>
-        {% endfor %}            
+            </section>
+
+            <!-- Display Posts from You and Another -->
+            <section>
+                <div id="posts-view">
+                <!-- <div id="post_{{post.id}}" class="post-container border bg-light m-2 p-2">
+                    <div class="username">{{post.user.username}}</div>
+                    <div class="content">{{post.body}}</div>
+                    <div class="timestamp">{{post.created_at}}</div>
+                    <div class="like-container"></div>
+                    </div>
+                </div> -->
+                </div>
+            </section>
+
+        </div>
     </div>
+
 {% endblock %}
 
 {% block script %}
+<script src="{% static 'network/posts.js' %}"></script>
 <script type="text/babel" src="{% static 'network/likes.js' %}"></script>
 {% endblock %}
