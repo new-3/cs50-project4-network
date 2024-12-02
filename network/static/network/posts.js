@@ -1,16 +1,16 @@
 // js for creating a new post
 
 async function create_post(postContent) {
-    const jsonRequest = JSON.stringify({
-        body: postContent,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    console.log(jsonRequest);
+    const csrftoken = document.querySelector('[name=csrf-token]').content;
     fetch('/compose', {
         method: 'POST',
-        body: jsonRequest
+        body: JSON.stringify({
+            body: postContent
+        }), 
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        }
     })
     .then(response => response.json())
     .then(result => {

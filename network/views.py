@@ -81,7 +81,7 @@ def register(request):
 # Compose Post
 @login_required
 def compose(request):
-    
+    # print(f"Request Header: {request.headers}")
     # Composing a new post must be via POST
     if request.method != "POST":
         return JsonResponse({"error": "Post request required."}, status=400)

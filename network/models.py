@@ -12,7 +12,7 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='profile')
     photo = models.ImageField(upload_to="network/users/pictures/", default="network/users/pictures/default.jpg")
-    following = models.ManyToManyField('self', related_name='followers', symmetrical=False)
+    following = models.ManyToManyField('self', related_name='followers', symmetrical=False, null=True, blank=True)
     follower_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
 
