@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from .models import User, UserProfile, Post
 
@@ -14,15 +15,15 @@ def index(request):
     return render(request, "network/index.html")
 
 
-def all_posts(request):
-    # this is temporary function for early developing.
-    # should be replaced by fetching API Calls.
-    posts = Post.objects.all()
-    print(posts)
-    return render(request, "network/index.html", {
-        'title': "All Posts",
-        'posts': posts
-    })
+# def all_posts(request):
+#     # this is temporary function for early developing.
+#     # should be replaced by fetching API Calls.
+#     posts = Post.objects.all()
+#     print(posts)
+#     return render(request, "network/index.html", {
+#         'title': "All Posts",
+#         'posts': posts
+#     })
 
 
 def login_view(request):
@@ -77,7 +78,8 @@ def register(request):
         return render(request, "network/register.html")
 
 
-# APIs
+######### API functions ##########
+
 # Compose Post
 @login_required
 def compose(request):
@@ -103,4 +105,17 @@ def compose(request):
     return JsonResponse({"message": "Post is successfully saved."}, status=201)
 
 
-## Comment Added form Laptop
+# getPost 'GET'
+def load_post(request):
+    data = json.loads(request.body)
+    user = request.user
+    PPG = 10  # posts per page
+    filter = data.get("filter")
+    if filter == 'all':
+        posts = Paginator(Post.objects.all(), PPG)
+    elif filter == 'profile':
+        filter_user = data.get("filter_user")
+        posts = Paginator(Post.objects.filter(userprofile=filter_user))
+    elif filter == 'following':
+        filter_user = data.get("filter_user")
+        following_id = 
