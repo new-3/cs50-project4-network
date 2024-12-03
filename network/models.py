@@ -47,6 +47,16 @@ class Post(models.Model):
     likes = models.ManyToManyField('UserProfile', related_name="likes")
     like_count = models.IntegerField(default=0)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "body": self.body,
+            "created_at": self.created_at,
+            "edited_at": self.edited_at,
+            "liked_users": self.likes.all(),
+            "like_count": self.like_count
+        }
+
 @receiver(post_save, sender=Post.likes.through)
 def update_likes_count_on_add(sender, instance, **kwargs):
     instance.like_count = instance.likes.count()
