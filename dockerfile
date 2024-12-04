@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && apt-get clean
 
+# Install required system packages for psycopg3
+RUN apt-get install -y libpq-dev
+
 # Set the working directory
 WORKDIR /app
 
@@ -17,7 +20,6 @@ WORKDIR /app
 RUN pip install --upgrade pip
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
 
 # Copy the project code into the container
 COPY . .
