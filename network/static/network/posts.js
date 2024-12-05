@@ -96,6 +96,8 @@ function load_posts(page_num) {
                 return false;
             })
         }
+        document.querySelector('#pagination').style.display = 'block';
+
 
         // focus post textarea after loading.
         document.querySelector('#compose-body').focus();
