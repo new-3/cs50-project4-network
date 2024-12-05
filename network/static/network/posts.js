@@ -19,15 +19,14 @@ async function create_post(postContent) {
     })
 }
 
-function load_posts() {
+function load_posts(page_num) {
     const containerDiv = document.querySelector('#posts-view')
-    const posts = fetch('/posts', {
+    const posts = fetch(`/posts?page=${page_num}`, {
         method: 'GET'
         // todo : pagination
     })
     .then(response => response.json())
     .then(result => {
-        console.log(Array.isArray(result.data));
         if (result.data && Array.isArray(result.data)) {
             const containerDiv = document.querySelector('#posts-view');
             containerDiv.innerHTML = "";
@@ -72,6 +71,36 @@ function load_posts() {
                 postDiv.appendChild(restDiv);                
    
                 containerDiv.appendChild(postDiv);
+
+                
+
+                const curPage = result.page.page;
+
+            })
+        }
+        // pagination
+        const prevDiv = document.querySelector('#page-previous');
+        const nextDiv = document.querySelector('#page-next');
+        console.log('checking pagination');
+        console.log(result.page);
+        if (!result.page.has_previous) {
+            prevDiv.classList.add('disabled');
+        } else {
+            prevDiv.classList.remove('disabled');
+            prevDiv.addEventListener('click', (event) => {
+                event.preventDefault();                
+                load_posts(result.page.prev_page_num);
+                return false;
+            });
+        }
+        if (!result.page.has_next) {
+            nextDiv.classList.add('disabled');
+        } else {
+            nextDiv.classList.remove('disabled');
+            nextDiv.addEventListener('click', (event) => {
+                event.preventDefault();                
+                load_posts(result.page.next_page_num);
+                return false;
             })
         }
         
@@ -79,7 +108,7 @@ function load_posts() {
 }
 
 // Load all posts
-load_posts();
+load_posts(1);
 
 
 document.addEventListener('DOMContentLoaded', (event) => {

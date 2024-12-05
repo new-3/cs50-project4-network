@@ -134,19 +134,25 @@ def all_posts(request):
     print(f"page_obj: {page_obj}")
 
     data = [post.serialize() for post in page_obj]
-
-    response = {
-        'data': data,
-        'page': paginator.get_page(page_number),
-        'num_pages': paginator.num_pages}
+    page = paginator.get_page(page_number)
     
-    print(response)
+    prev_page_num = page.previous_page_number() if page.has_previous() else None
+    next_page_num = page.next_page_number() if page.has_next() else None
+
+    page_data = {
+        'page': page.number,
+        'num_pages': paginator.num_pages,
+        'has_previous': page.has_previous(),
+        'prev_page_num': prev_page_num,
+        'has_next': page.has_next(),
+        'next_page_num': next_page_num}
+
+    print(page_data)
 
     return JsonResponse({
         'data': data,
-        'page': paginator.get_page(page_number).number,
-        'num_pages': paginator.num_pages}
-        , safe=False) 
+        'page': page_data},
+        safe=False) 
 
 # 'GET' return posts by specific user
 def user_posts(request):
