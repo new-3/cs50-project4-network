@@ -14,8 +14,8 @@ async function create_post(postContent) {
     })
     .then(response => response.json())
     .then(result => {
-        console.log(result);
-        load_posts()
+        // load first page
+        load_posts(1);
     })
 }
 
@@ -71,18 +71,11 @@ function load_posts(page_num) {
                 postDiv.appendChild(restDiv);                
    
                 containerDiv.appendChild(postDiv);
-
-                
-
-                const curPage = result.page.page;
-
             })
         }
         // pagination
         const prevDiv = document.querySelector('#page-previous');
         const nextDiv = document.querySelector('#page-next');
-        console.log('checking pagination');
-        console.log(result.page);
         if (!result.page.has_previous) {
             prevDiv.classList.add('disabled');
         } else {
@@ -103,6 +96,9 @@ function load_posts(page_num) {
                 return false;
             })
         }
+
+        // focus post textarea after loading.
+        document.querySelector('#compose-body').focus();
         
     });
 }
