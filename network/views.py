@@ -68,6 +68,10 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+
+            # automatically create userprofile instace
+            UserProfile.objects.create(user=user)
+
         except IntegrityError:
             return render(request, "network/register.html", {
                 "message": "Username already taken."
@@ -80,7 +84,7 @@ def register(request):
 
 ######### API functions ##########
 
-# Compose Post
+# 'POST' Compose Post
 @login_required
 def compose(request):
     # print(f"Request Header: {request.headers}")
@@ -105,17 +109,53 @@ def compose(request):
     return JsonResponse({"message": "Post is successfully saved."}, status=201)
 
 
-# getPost 'GET'
-def load_post(request):
-    data = json.loads(request.body)
-    user = request.user
-    PPG = 10  # posts per page
-    filter = data.get("filter")
-    if filter == 'all':
-        posts = Paginator(Post.objects.all(), PPG)
-    elif filter == 'profile':
-        filter_user = data.get("filter_user")
-        posts = Paginator(Post.objects.filter(userprofile=filter_user))
-    elif filter == 'following':
-        filter_user = data.get("filter_user")
-        following_id = 
+# function for returning posts by filter
+def filter_posts(userprofile_id, followed=False):
+    if userprofile_id and not followed:
+        return Post.objects.filter(user_profile=userprofile_id)
+    
+    if userprofile_id and followed:
+        followed_group = UserProfile.objects.get(pk=userprofile_id).following
+        posts = Post.objects.none()
+        for userprofile in followed_group:
+            posts = posts.union(Post.objects.filter(user_profile=userprofile))
+
+        return posts
+
+
+PPV = 10  # Posts Per View
+# 'GET' return ALL posts
+def all_posts(request):
+
+    page_number = request.GET.get("page") or 1
+    paginator = Paginator(Post.objects.order_by('-created_at').all(), PPV)
+    page_obj = paginator.page(page_number).object_list
+    print(f"Type of page_obj: {type(page_obj)}")
+    print(f"page_obj: {page_obj}")
+
+    data = [post.serialize() for post in page_obj]
+
+    response = {
+        'data': data,
+        'page': paginator.get_page(page_number),
+        'num_pages': paginator.num_pages}
+    
+    print(response)
+
+    return JsonResponse({
+        'data': data,
+        'page': paginator.get_page(page_number).number,
+        'num_pages': paginator.num_pages}
+        , safe=False) 
+
+# 'GET' return posts by specific user
+def user_posts(request):
+    page_number = request.GET.get("page")
+    pass
+
+
+# 'GET return posts by followed users
+@login_required
+def followed_posts(request):
+    page_number = request.GET.get("page")
+    pass

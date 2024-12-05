@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import IntegrityError, models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
@@ -8,6 +8,7 @@ class User(AbstractUser):
 
     def __str__(self) -> str:
         return f"{self.username}"
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='profile')
@@ -48,13 +49,18 @@ class Post(models.Model):
     like_count = models.IntegerField(default=0)
 
     def serialize(self):
+        # warning for future me:
+        # values of each field must not be some Django class (they can't be JSON serialized)
         return {
             "id": self.id,
+            "user_profile": self.user_profile.id,
+            "pic_url" : self.user_profile.photo.url,
+            "username": self.user_profile.user.username,
             "body": self.body,
-            "created_at": self.created_at,
-            "edited_at": self.edited_at,
-            "liked_users": self.likes.all(),
-            "like_count": self.like_count
+            "created_at": self.created_at.isoformat(),
+            "edited_at": self.edited_at.isoformat(),
+            "liked_users": list(self.likes.values_list('id', flat=True)),  # Returns a clean list of IDs
+            "like_count": self.like_count,
         }
 
 @receiver(post_save, sender=Post.likes.through)
