@@ -13,6 +13,6 @@ function Like() {
 }
 const posts_div = Array.from(document.querySelectorAll('.post-container'))
 posts_div.forEach(postContainer => {
-    postContainer.querySelector(".like-container").append("hi")
-    ReactDOM.render(<Like />, postContainer.querySelector(".like-container"))
+    postContainer.querySelector("#like").append("hi")
+    ReactDOM.render(<Like />, postContainer.querySelector("#like"))
 })

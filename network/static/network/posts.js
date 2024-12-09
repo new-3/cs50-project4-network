@@ -31,73 +31,66 @@ function load_posts(page_num) {
             const containerDiv = document.querySelector('#posts-view');
             containerDiv.innerHTML = "";
 
+        // Each Post
             result.data.forEach(post => {
-                // debug
-                // console.log(post);
-
-                const postDiv = document.createElement('div');
-                postDiv.id = `post_${post.id}`;
-                postDiv.className = 'post-container border bg-light m-2 p-2 row';
+                console.log(post);
+                const clone = document.querySelector('template#post').content.cloneNode(true);
+                clone.id = `post_${post.id}`;
+                const picImg = clone.querySelector('#profile_pic img');
+                picImg.src = `${post.pic_url}`;
+                clone.querySelector('#username').innerHTML = post.username;
                 
-                const picDiv = document.createElement('div');
-                picDiv.className = 'col-2 col-2-md justify-content-center';
-                picDiv.innerHTML = `<img src='${post.pic_url}' width=75px height=75px>`
-
-                const restDiv = document.createElement('div');
-                restDiv.className = 'col';
-
-                const userDiv = document.createElement('div');
-                userDiv.className = "py-1 ";
-                userDiv.innerHTML = post.username;
-                // todo: link to profile
-                
-                const bodyDiv = document.createElement('div');
-                bodyDiv.className = "py-1 ";
-                bodyDiv.innerHTML = post.body;
-                
-                const timeDiv = document.createElement('div');
-                timeDiv.className = "py-1 ";
-
-                if (post.edited_at !== post.created_at) {
-                    timeDiv.innerHTML = `Edited: ${post.edited_at}`;
-                } else {
-                    timeDiv.innerHTML = `Created: ${post.created_at}`;
+                const restDiv = clone.querySelector('#rest');
+                restDiv.querySelector('#body').innerHTML = post.body;
+                let isoString = post.edited_at;
+                let date = new Date(isoString);
+                let options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
                 }
-                postDiv.appendChild(picDiv);
+                let displayDate = date.toLocaleString('en-US', options);
+                restDiv.querySelector('#time').innerHTML = displayDate;
 
-                restDiv.appendChild(userDiv);
-                restDiv.appendChild(bodyDiv);
-                restDiv.appendChild(timeDiv);
-                postDiv.appendChild(restDiv);                
-   
-                containerDiv.appendChild(postDiv);
-            })
+                containerDiv.appendChild(clone);
+            }
+
+            )
         }
         // pagination
         const prevDiv = document.querySelector('#page-previous');
         const nextDiv = document.querySelector('#page-next');
+
         if (!result.page.has_previous) {
             prevDiv.classList.add('disabled');
+            prevDiv.style.display = 'none';
         } else {
             prevDiv.classList.remove('disabled');
-            prevDiv.addEventListener('click', (event) => {
+            prevDiv.style.display = 'block';
+            prevDiv.querySelector('button').addEventListener('click', (event) => {
                 event.preventDefault();                
                 load_posts(result.page.prev_page_num);
                 return false;
             });
+            
         }
         if (!result.page.has_next) {
             nextDiv.classList.add('disabled');
+            nextDiv.style.display = 'none';
         } else {
             nextDiv.classList.remove('disabled');
-            nextDiv.addEventListener('click', (event) => {
-                event.preventDefault();                
-                load_posts(result.page.next_page_num);
-                return false;
-            })
+            nextDiv.style.display = 'block';
         }
         document.querySelector('#pagination').style.display = 'block';
 
+        nextDiv.querySelector('button').addEventListener('click', (event) => {
+            event.preventDefault();
+            load_posts(result.page.next_page_num);
+            return false;
+        })
 
         // focus post textarea after loading.
         document.querySelector('#compose-body').focus();
@@ -109,9 +102,7 @@ function load_posts(page_num) {
 load_posts(1);
 
 
-document.addEventListener('DOMContentLoaded', (event) => {
-
-
+document.addEventListener('DOMContentLoaded', () => {
     // Event for Submit Button
     const submitForm = document.querySelector('#compose-view > form');
     submitForm.addEventListener("submit", (event) => {

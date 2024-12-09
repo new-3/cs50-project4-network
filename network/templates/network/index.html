@@ -6,6 +6,41 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Template of div for each post -->
+    <template id="post">
+        <div class="post-container border bg-light m-2 mt-1 row position-relative">
+        <!-- pic, username, context, time -->
+            <div id="profile_pic" class="col-2 justify-content-center">
+                <div id="username" class="py-1"></div>
+                <img src='' width=75px height=75px>
+            </div>
+            <div id="rest" class="col">                
+                <div id="body" class="py-1"></div>
+                <div id="time" class="py-1"></div>
+                <div id="like" class="py-1"></div>
+            </div>
+
+
+        <!-- dropdown section -->
+        <section class="dropdown-section">
+            <div class="position-absolute top-0 end-0 pe-3 pt-2">
+                <div class="dropdown">
+                  <!-- Three dots button -->
+                  <a class="btn p-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots"></i>
+                  </a>
+                  <!-- Dropdown menu items -->
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                  </ul>
+                </div>
+              </div>
+        </section>
+    </div>
+
+    </template>
+
     <div class="big-container px-3">
         
         <h1>{{ title }}</h1>
@@ -15,10 +50,12 @@
             <section>
                 <div id="compose-view" class="">
                     <h3>Create a new Post</h3>
-                    <form class="compose-form text-right">
+                    <form class="compose-form">
                         <div class="form-group">
                             <textarea class="form-control my-1" id="compose-body" placeholder="Share your Thoughts!"></textarea>
-                            <input type="submit" class="btn btn-primary">
+                            <div class="text-end mt-3">
+                                <input type="submit" class="btn btn-primary ">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -26,7 +63,7 @@
 
             <!-- Display Posts from You and Another -->
             <section>
-                <div id="posts-view" class="my-5">
+                <div id="posts-view" class="my-4">
                 </div>
             </section>
             <!-- Pagination -->
@@ -35,13 +72,15 @@
                   <ul class="pagination justify-content-center">
                     <li id="page-previous" class="page-item">
                       <button class="page-link" aria-label="Previous">
-                        <span aria-hidden="true">Previous</span>
+                        <!-- <span aria-hidden="true">Previous</span> -->
                         <span class="sr-only">Previous</span>
+                      </a>
                     </li>
                     <li id="page-next" class="page-item">
                       <button class="page-link" aria-label="Next">
-                        <span aria-hidden="true">Next</span>
+                        <!-- <span aria-hidden="true">Next</span> -->
                         <span class="sr-only">Next</span>
+                      </a>
                     </li>
                   </ul>
               </nav>
