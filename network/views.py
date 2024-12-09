@@ -133,7 +133,16 @@ def all_posts(request):
     print(f"Type of page_obj: {type(page_obj)}")
     print(f"page_obj: {page_obj}")
 
-    data = [post.serialize() for post in page_obj]
+    data = []
+    for post in page_obj:
+        new_post = post.serialize()
+        if request.user in new_post['liked_users']:
+            new_post['liked_by'] = True
+        else:
+            new_post['liked_by'] = False
+        data.append(new_post)
+    # data = [post.serialize() for post in page_obj]
+
     page = paginator.get_page(page_number)
     
     prev_page_num = page.previous_page_number() if page.has_previous() else None

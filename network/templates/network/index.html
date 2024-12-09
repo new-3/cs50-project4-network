@@ -17,7 +17,9 @@
             <div id="rest" class="col">                
                 <div id="body" class="py-1"></div>
                 <div id="time" class="py-1"></div>
-                <div id="like" class="py-1"></div>
+                <div id="like" class="py-1">
+                  <button id='like-btn' data-status = "" class="btn btn-sm btn-outline-primary"><i class="bi bi-heart"></i><div id='like-count' style="display: inline;"></div></button>
+                </div>
             </div>
 
 
@@ -93,5 +95,4 @@
 
 {% block script %}
 <script src="{% static 'network/posts.js' %}"></script>
-<script type="text/babel" src="{% static 'network/likes.js' %}"></script>
 {% endblock %}

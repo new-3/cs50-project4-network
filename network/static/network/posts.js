@@ -33,7 +33,6 @@ function load_posts(page_num) {
 
         // Each Post
             result.data.forEach(post => {
-                console.log(post);
                 const clone = document.querySelector('template#post').content.cloneNode(true);
                 clone.id = `post_${post.id}`;
                 const picImg = clone.querySelector('#profile_pic img');
@@ -55,7 +54,33 @@ function load_posts(page_num) {
                 let displayDate = date.toLocaleString('en-US', options);
                 restDiv.querySelector('#time').innerHTML = displayDate;
 
+                const likeDiv = restDiv.querySelector('#like');
+                const likeBtn = likeDiv.querySelector('#like-btn');
+
+                if (post.liked_by) {
+                    likeBtn.dataset.status = 'cancel';
+                    likeBtn.querySelector('i').classList.add('bi-heart-fill');
+                    likeBtn.querySelector('i').classList.remove('bi-heart');
+                } else {
+                    likeBtn.dataset.status = 'like';
+                    likeBtn.querySelector('i').classList.remove('bi-heart-fill');
+                    likeBtn.querySelector('i').classList.add('bi-heart');
+                }
+                likeBtn.querySelector('#like-count').innerHTML = `&nbsp;${post.like_count}`
+
                 containerDiv.appendChild(clone);
+                likeBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (likeBtn.dataset.status === 'like') {
+                        likeBtn.dataset.status = 'cancel';
+                        likeBtn.querySelector('i').classList.remove('bi-heart-fill');
+                        likeBtn.querySelector('i').classList.add('bi-heart');
+                    } else if (likeBtn.dataset.status === 'cancel') {
+                        likeBtn.dataset.status = 'like';
+                        likeBtn.querySelector('i').classList.add('bi-heart-fill');
+                        likeBtn.querySelector('i').classList.remove('bi-heart');
+                    }
+                })
             }
 
             )
@@ -103,6 +128,7 @@ load_posts(1);
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM Contents are fully loaded.")
     // Event for Submit Button
     const submitForm = document.querySelector('#compose-view > form');
     submitForm.addEventListener("submit", (event) => {
@@ -110,4 +136,5 @@ document.addEventListener('DOMContentLoaded', () => {
         const postContent = submitForm.querySelector('#compose-body').value;
         create_post(postContent);
     })
+
 })
