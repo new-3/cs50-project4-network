@@ -71,6 +71,20 @@ function load_posts(page_num) {
                 containerDiv.appendChild(clone);
                 likeBtn.addEventListener('click', (event) => {
                     event.preventDefault();
+                    fetch(`/like/${post.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-CSRFToken": token
+                        },
+                        body: JSON.stringify({
+                            post: post.id,
+                            status: likeBtn.dataset.status
+                        })
+                    }).then(response => {
+                        console.log(response);
+                    })
+                    // Not Done Yet.
                     if (likeBtn.dataset.status === 'like') {
                         likeBtn.dataset.status = 'cancel';
                         likeBtn.querySelector('i').classList.remove('bi-heart-fill');

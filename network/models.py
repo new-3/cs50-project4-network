@@ -41,12 +41,12 @@ class Post(models.Model):
             "like_count": self.like_count,
         }
 
-@receiver(post_save, sender=Post.likes.through)
-def update_likes_count_on_add(sender, instance, **kwargs):
-    instance.like_count = instance.likes.count()
-    instance.save()
+# @receiver(post_save, sender=Post.likes.through)
+# def update_likes_count_on_add(sender, instance, **kwargs):
+#     instance.like_count = instance.likes.count()
+#     instance.save()
 
-@receiver(post_delete, sender=Post.likes.through)
-def update_likes_count_on_remove(sender, instance, **kwargs):
-    instance.like_count = instance.likes.count()
-    instance.save()
+# @receiver(post_delete, sender=Post.likes.through)
+# def update_likes_count_on_remove(sender, instance, **kwargs):
+#     instance.like_count = instance.likes.count()
+#     instance.save()

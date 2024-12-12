@@ -183,4 +183,17 @@ def toggle_like(request):
         return JsonResponse({"error": "Put request required."}, status=400)
     
     data = json.loads(request.body)
+    # post id, userid
+    user = request.user
+    post = data.get("post")
+
+    # check if request user is post user (deny)
+    if user == post.profile.user:
+        return JsonResponse({"error": "Cannot like own post."}, status=400)
     
+    # post.likes.add(user.profile)
+    # post.save()
+    return JsonResponse({
+        "message": f"{user} Liked the post {post}"
+    }, status=201)
+    # todo : cancel like (when already liked)
