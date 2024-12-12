@@ -174,3 +174,13 @@ def user_posts(request):
 def followed_posts(request):
     page_number = request.GET.get("page")
     pass
+
+
+# 'PUT' 
+@login_required
+def toggle_like(request):
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Put request required."}, status=400)
+    
+    data = json.loads(request.body)
+    

@@ -18,28 +18,6 @@ class UserProfile(models.Model):
     following_count = models.IntegerField(default=0)
 
 
-# Update followers/following count when related change occured.
-@receiver(post_save, sender=UserProfile.following.through)
-def update_follower_count_on_add(sender, instance, **kwargs):
-    instance.follower_count = instance.followers.count()
-    instance.save()
-
-@receiver(post_delete, sender=UserProfile.following.through)
-def update_follower_count_on_remove(sender, instance, **kwargs):
-    instance.follower_count = instance.followers.count()
-    instance.save()
-
-@receiver(post_save, sender=UserProfile.followers.through)
-def update_following_count_on_add(sender, instance, **kwargs):
-    instance.following_count = instance.following.count()
-    instance.save()
-
-@receiver(post_delete, sender=UserProfile.followers.through)
-def update_following_count_on_remove(sender, instance, **kwargs):
-    instance.following_count = instance.following.count()
-    instance.save()
-
-
 class Post(models.Model):
     user_profile = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='posts')
     body = models.TextField(null=False, default="EMPTY")
