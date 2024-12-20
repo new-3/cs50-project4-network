@@ -19,6 +19,40 @@ async function create_post(postContent) {
     })
 }
 
+async function like(post) {
+    const csrftoken = document.querySelector('[name=csrf-token]').content;
+    console.log(post);
+    fetch(`/like`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            body: post
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        }
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("result: ");
+        console.log(result);
+        const likeBtn = document.querySelector(`#post_${post.id} #like-btn`)
+
+        likeBtn.querySelector('#like-count').innerHTML = `&nbsp;${result.count}`
+        if (result.liked_by) {
+            likeBtn.dataset.status = 'cancel';
+            likeBtn.querySelector('i').classList.add('bi-heart-fill');
+            likeBtn.querySelector('i').classList.remove('bi-heart');
+        } else {
+            likeBtn.dataset.status = 'like';
+            likeBtn.querySelector('i').classList.remove('bi-heart-fill');
+            likeBtn.querySelector('i').classList.add('bi-heart');
+        }
+        
+    })
+}
+
+
 function load_posts(page_num) {
     const containerDiv = document.querySelector('#posts-view')
     const posts = fetch(`/posts?page=${page_num}`, {
@@ -28,13 +62,14 @@ function load_posts(page_num) {
     .then(response => response.json())
     .then(result => {
         if (result.data && Array.isArray(result.data)) {
+            console.log(result.data);
             const containerDiv = document.querySelector('#posts-view');
             containerDiv.innerHTML = "";
 
         // Each Post
             result.data.forEach(post => {
                 const clone = document.querySelector('template#post').content.cloneNode(true);
-                clone.id = `post_${post.id}`;
+                clone.querySelector('.post-container').id = `post_${post.id}`;
                 const picImg = clone.querySelector('#profile_pic img');
                 picImg.src = `${post.pic_url}`;
                 clone.querySelector('#username').innerHTML = post.username;
@@ -69,21 +104,11 @@ function load_posts(page_num) {
                 likeBtn.querySelector('#like-count').innerHTML = `&nbsp;${post.like_count}`
 
                 containerDiv.appendChild(clone);
+
                 likeBtn.addEventListener('click', (event) => {
                     event.preventDefault();
-                    fetch(`/like/${post.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            "X-CSRFToken": token
-                        },
-                        body: JSON.stringify({
-                            post: post.id,
-                            status: likeBtn.dataset.status
-                        })
-                    }).then(response => {
-                        console.log(response);
-                    })
+                    like(post)
+
                     // Not Done Yet.
                     if (likeBtn.dataset.status === 'like') {
                         likeBtn.dataset.status = 'cancel';

@@ -136,7 +136,7 @@ def all_posts(request):
     data = []
     for post in page_obj:
         new_post = post.serialize()
-        if request.user in new_post['liked_users']:
+        if request.user.profile.id in new_post['liked_users']:
             new_post['liked_by'] = True
         else:
             new_post['liked_by'] = False
@@ -179,21 +179,65 @@ def followed_posts(request):
 # 'PUT' 
 @login_required
 def toggle_like(request):
+    print("toggle like")
     if request.method != 'PUT':
         return JsonResponse({"error": "Put request required."}, status=400)
     
     data = json.loads(request.body)
     # post id, userid
-    user = request.user
-    post = data.get("post")
+    cur_user = request.user
+    body = data["body"]
+    postID = body["id"]
+    post = Post.objects.get(id=postID)
+    post_profileID = body["user_profile"]
+    post_profile = UserProfile.objects.get(id=post_profileID)
+    print(f"현재 로그인 유저: {cur_user}")
+    print(f"포스트 작성 user: {post_profile.user}")
 
     # check if request user is post user (deny)
-    if user == post.profile.user:
+    if cur_user == post_profile.user:
         return JsonResponse({"error": "Cannot like own post."}, status=400)
+    
+    print("Current User's PROFILE")
+    print(type(post_profile))
+    print(post_profile)
+    print("LIKES 목록")
+    for liked_user_profile in post.likes.all():
+        if cur_user == liked_user_profile.user:
+            print(f"{cur_user} == {liked_user_profile.user}")
+        else:
+            print(f"{cur_user} != {liked_user_profile.user}")
+
+
+    # If the user has already liked the post, CANCEL like. 
+    if cur_user.profile in post.likes.all():
+        post.likes.remove(cur_user.profile)
+        post.like_count = post.likes.count()
+        post.save()
+        print(post.like_count)
+        msg = f"{cur_user} ({cur_user.profile}) Canceled the like on post {postID}"
+        print(msg)
+        return JsonResponse({
+            "message": msg,
+            "count": post.like_count,
+            "liked_by": False
+        }, status=201)
+
+    # If the user has not liked the post yet, LIKE.
+    else:
+        post.likes.add(cur_user.profile)  
+        post.like_count = post.likes.count()
+        post.save()
+        print(post)
+        msg = f"{cur_user} ({cur_user.profile}) Liked the post {postID}"
+        print(msg)
+        return JsonResponse({
+            "message": msg,
+            "count": post.like_count,
+            "liked_by": True
+        }, status=201)
     
     # post.likes.add(user.profile)
     # post.save()
-    return JsonResponse({
-        "message": f"{user} Liked the post {post}"
-    }, status=201)
+    
     # todo : cancel like (when already liked)
